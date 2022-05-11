@@ -10,11 +10,8 @@ from datetime import datetime, timedelta, timezone
 from requests_oauthlib import OAuth1Session
 from urllib import response
 
-# APSchedulerの変数を作成
-scheduler = BlockingScheduler()
 
-
-# 送信から15時間以上経ったマップ情報ツイートを削除
+# 送信から6時間以上経ったマップ情報ツイートを削除
 def cleanUp(screen_name, api):
     head = "【現在のマップローテーション】"
     tweets = api.user_timeline(screen_name=screen_name, count=15)
@@ -41,7 +38,6 @@ def appendName(json_input):
         item['whose'] = buff[:idx_end]
 
 
-@scheduler.scheduled_job('interval', minute=10)
 def map_rotation(api):
     time.sleep(5)
     screen_name = "ApexMapBot"
@@ -111,7 +107,6 @@ def map_rotation(api):
         cleanUp(screen_name, api)
 
 
-@scheduler.scheduled_job('cron', hour=18)
 def craft_rotation(api):
     time.sleep(10)
     item_list_daily = {"extended_light_mag": "拡張ライトマガジン Lv3",
@@ -176,7 +171,6 @@ def craft_rotation(api):
     print("Tweet(craft rotation) has been sent.")
 
 
-@scheduler.scheduled_job('cron', day_of_week='tue', hour=18, minute=30)
 def store_info():
     time.sleep(10)
     json_op = open('names_jp.json', encoding='utf-8')
@@ -240,6 +234,13 @@ def store_info():
 auth = tweepy.OAuthHandler(settings.API_KEY, settings.API_SECRET_KEY)
 auth.set_access_token(settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
 api = tweepy.API(auth)
+
+# APSchedulerの変数を作成
+scheduler = BlockingScheduler()
+
+scheduler.add_job(map_rotation(api), 'interval', minutes=10)
+scheduler.add_job(craft_rotation(api), 'cron', hour=18)
+scheduler.add_job(store_info, 'cron', day_of_week='tue', hour=18, minutes=30)
 
 # APSchedulerを開始
 scheduler.start()
