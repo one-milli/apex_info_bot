@@ -3,7 +3,6 @@ import requests
 import settings
 import sys
 import time
-import twitter
 import tweepy
 import urllib.request
 from apscheduler.schedulers.blocking import BlockingScheduler
