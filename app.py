@@ -38,7 +38,7 @@ def appendName(json_input):
         item['whose'] = buff[:idx_end]
 
 
-def map_rotation(api):
+def map_rotation():
     time.sleep(5)
     screen_name = "ApexMapBot"
     map_list = {"Kings Canyon": {"name": "キングスキャニオン", "emoji": 127964}, "World's Edge": {"name": "ワールズエッジ", "emoji": 127755},
@@ -91,6 +91,11 @@ def map_rotation(api):
     for i in range(len(tweet_segment)):
         tweet_content = tweet_content + tweet_segment[i]
 
+    # APIインスタンスを作成
+    auth = tweepy.OAuthHandler(settings.API_KEY, settings.API_SECRET_KEY)
+    auth.set_access_token(settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
+    api = tweepy.API(auth)
+
     # 自身の直近10ツイートを取得し，まだtweet_contentをツイートしていないことを確認
     isnt_tweeted = True
     tweets = api.user_timeline(screen_name=screen_name, count=10)
@@ -107,7 +112,7 @@ def map_rotation(api):
         cleanUp(screen_name, api)
 
 
-def craft_rotation(api):
+def craft_rotation():
     time.sleep(10)
     item_list_daily = {"extended_light_mag": "拡張ライトマガジン Lv3",
                        "extended_heavy_mag": "拡張ヘビーマガジン Lv3",
@@ -165,6 +170,11 @@ def craft_rotation(api):
     tweet_content = ""
     for i in range(len(tweet_segment)):
         tweet_content = tweet_content + tweet_segment[i]
+
+    # APIインスタンスを作成
+    auth = tweepy.OAuthHandler(settings.API_KEY, settings.API_SECRET_KEY)
+    auth.set_access_token(settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
+    api = tweepy.API(auth)
 
     # ツイート送信
     api.update_status(tweet_content)
@@ -230,17 +240,15 @@ def store_info():
     print("Tweet(recolor store info) has been sent.")
 
 
-# APIインスタンスを作成
-auth = tweepy.OAuthHandler(settings.API_KEY, settings.API_SECRET_KEY)
-auth.set_access_token(settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
-api = tweepy.API(auth)
-
 # APSchedulerの変数を作成
 scheduler = BlockingScheduler()
 
-scheduler.add_job(map_rotation(api), 'interval', minutes=10)
-scheduler.add_job(craft_rotation(api), 'cron', hour=18)
-scheduler.add_job(store_info, 'cron', day_of_week='tue', hour=18, minutes=30)
+scheduler.add_job(map_rotation, 'interval', minutes=10)
+scheduler.add_job(craft_rotation, 'cron', hour=18)
+scheduler.add_job(store_info, 'cron', day_of_week='tue', hour=18, minute=30)
 
 # APSchedulerを開始
-scheduler.start()
+try:
+    scheduler.start()
+except (KeyboardInterrupt, SystemExit):
+    pass
