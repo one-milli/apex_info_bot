@@ -8,7 +8,6 @@ import urllib.request
 from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime, timedelta, timezone
 from requests_oauthlib import OAuth1Session
-from urllib import response
 
 
 # 送信から6時間以上経ったマップ情報ツイートを削除
@@ -243,7 +242,7 @@ def store_info():
 # APSchedulerの変数を作成
 scheduler = BlockingScheduler()
 
-scheduler.add_job(map_rotation, 'interval', minutes=30)
+scheduler.add_job(map_rotation, 'cron', minute='0,30')
 scheduler.add_job(craft_rotation, 'cron', hour=18)
 scheduler.add_job(store_info, 'cron', day_of_week='tue', hour=18, minute=30)
 
