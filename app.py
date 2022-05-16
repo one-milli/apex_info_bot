@@ -13,7 +13,7 @@ from requests_oauthlib import OAuth1Session
 # 送信から6時間以上経ったマップ情報ツイートを削除
 def cleanUp(screen_name, api):
     head = "【現在のマップローテーション】"
-    tweets = api.user_timeline(screen_name=screen_name, count=15)
+    tweets = api.user_timeline(screen_name=screen_name, count=10)
     now = datetime.now(timezone.utc)
     for tweet in tweets:
         timestamp = tweet.created_at
@@ -21,7 +21,7 @@ def cleanUp(screen_name, api):
         diff_days = diff.days
         diff_hours = diff.seconds/3600
         diff_hours = diff_hours+diff_days*24
-        if 6 < diff_hours and diff_hours < 30 and tweet.text.startswith(head):
+        if 6 < diff_hours and tweet.text.startswith(head):
             api.destroy_status(tweet.id)
             print("Tweet(ID:"+str(tweet.id)+") has been deleted")
 
@@ -128,7 +128,7 @@ def craft_rotation():
                        "optic_variable_sniper": "4~8倍可変式スナイパー",
                        "shatter_caps": "シャッターキャップ",
                        "kinetic_loader": "キネティックフィーダー",
-                       "hammerpoiont_rounds": "ハンマーポイント",
+                       "hammerpoint_rounds": "ハンマーポイント",
                        "boosted_loader": "ブーステッドローダー",
                        "turbocharger": "ターボチャージャー"}
     item_list_weekly = {"backpack": "バックパック Lv3",
@@ -182,6 +182,7 @@ def craft_rotation():
 
 def store_info():
     time.sleep(10)
+    screen_name = "ApexMapBot"
     json_op = open('names_jp.json', encoding='utf-8')
     names_jp = json.load(json_op)
 
@@ -200,7 +201,7 @@ def store_info():
     recolor_skins_json = []
     # リカラースキンのみ取り出し
     for item in json_shop:
-        if len(item['pricing']) == 2:
+        if len(item['pricing']) > 1:
             recolor_skins_json.append(item)
 
     # ツイート内容
@@ -234,9 +235,24 @@ def store_info():
     media_id = ','.join(media_id)
     params = {"status": tweet_content, "media_ids": media_id}
 
+    # APIインスタンスを作成
+    auth = tweepy.OAuthHandler(settings.API_KEY, settings.API_SECRET_KEY)
+    auth.set_access_token(settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
+    api = tweepy.API(auth)
+
+    # 自身の直近15ツイートを取得し，まだtweet_contentをツイートしていないことを確認
+    isnt_tweeted = True
+    tweets = api.user_timeline(screen_name=screen_name, count=15)
+    for tweet in tweets:
+        if tweet.text == tweet_content:
+            isnt_tweeted = False
+            print("This tweet was already sent")
+            break
+
     # ツイート送信
-    twitter.post(url_text, params=params)
-    print("Tweet(recolor store info) has been sent.")
+    if isnt_tweeted:
+        twitter.post(url_text, params=params)
+        print("Tweet(recolor store info) has been sent.")
 
 
 # APSchedulerの変数を作成
@@ -244,7 +260,8 @@ scheduler = BlockingScheduler()
 
 scheduler.add_job(map_rotation, 'cron', minute='0,30')
 scheduler.add_job(craft_rotation, 'cron', hour=18)
-scheduler.add_job(store_info, 'cron', day_of_week='tue', hour=18, minute=30)
+scheduler.add_job(store_info, 'cron',
+                  day_of_week='tue,sat', hour=18, minute=30)
 
 # APSchedulerを開始
 try:
