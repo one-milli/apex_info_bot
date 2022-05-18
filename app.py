@@ -206,10 +206,10 @@ def store_info():
 
     # ツイート内容
     tweet_segment = ["【色違いスキン ストア情報】\n",
-                     "1."+recolor_skins_json[0]['content'][0]['name']+"\n",
+                     "(1)"+recolor_skins_json[0]['content'][0]['name']+"\n",
                      "("+names_jp.get(recolor_skins_json[0]['whose'],
                                       recolor_skins_json[0]['whose'])+"のスキン)\n\n",
-                     "2."+recolor_skins_json[1]['content'][0]['name']+"\n",
+                     "(2)"+recolor_skins_json[1]['content'][0]['name']+"\n",
                      "("+names_jp.get(recolor_skins_json[1]['whose'],
                                       recolor_skins_json[1]['whose'])+"のスキン)"]
     tweet_content = ""
@@ -260,8 +260,7 @@ scheduler = BlockingScheduler()
 
 scheduler.add_job(map_rotation, 'cron', minute='0,30')
 scheduler.add_job(craft_rotation, 'cron', hour=18)
-scheduler.add_job(store_info, 'cron',
-                  day_of_week='tue,sat', hour=18, minute=30)
+scheduler.add_job(store_info, 'cron', day_of_week='tue,sat', hour=21)
 
 # APSchedulerを開始
 try:
