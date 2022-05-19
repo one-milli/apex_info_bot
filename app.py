@@ -226,7 +226,7 @@ def store_info():
     for i in range(2):
         headers = {"User-Agent": "Mozilla/5.0"}
         request = urllib.request.Request(
-            url=recolor_skins_json[i]['asset'], headers=headers)
+            url=recolor_skins_json_sorted[i]['asset'], headers=headers)
         response = urllib.request.urlopen(request)
         data = response.read()
         files = {"media": data}
