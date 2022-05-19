@@ -203,15 +203,16 @@ def store_info():
     for item in json_shop:
         if len(item['pricing']) > 1:
             recolor_skins_json.append(item)
+    recolor_skins_json_sorted = sorted(recolor_skins_json.json)
 
     # ツイート内容
     tweet_segment = ["【色違いスキン ストア情報】\n",
                      "(1)"+recolor_skins_json[0]['content'][0]['name']+"\n",
-                     "("+names_jp.get(recolor_skins_json[0]['whose'],
-                                      recolor_skins_json[0]['whose'])+"のスキン)\n\n",
+                     "("+names_jp.get(recolor_skins_json_sorted[0]['whose'],
+                                      recolor_skins_json_sorted[0]['whose'])+"のスキン)\n\n",
                      "(2)"+recolor_skins_json[1]['content'][0]['name']+"\n",
-                     "("+names_jp.get(recolor_skins_json[1]['whose'],
-                                      recolor_skins_json[1]['whose'])+"のスキン)"]
+                     "("+names_jp.get(recolor_skins_json_sorted[1]['whose'],
+                                      recolor_skins_json_sorted[1]['whose'])+"のスキン)"]
     tweet_content = ""
     for i in range(len(tweet_segment)):
         tweet_content = tweet_content + tweet_segment[i]
@@ -260,7 +261,7 @@ scheduler = BlockingScheduler()
 
 scheduler.add_job(map_rotation, 'cron', minute='0,30')
 scheduler.add_job(craft_rotation, 'cron', hour=18)
-scheduler.add_job(store_info, 'cron', day_of_week='tue,sat', hour=21)
+scheduler.add_job(store_info, 'cron', hour=21)
 
 # APSchedulerを開始
 try:
