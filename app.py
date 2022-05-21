@@ -101,13 +101,13 @@ def map_rotation():
     for tweet in tweets:
         if tweet.text == tweet_content:
             isnt_tweeted = False
-            print("This tweet was already sent")
+            print("(Map)This tweet was already sent")
             break
 
     # ツイート送信(まだtweet_contentをツイートしていないとき)
     if isnt_tweeted:
         api.update_status(tweet_content)
-        print("Tweet(map rotation) has been sent")
+        print("(Map)Tweet has been sent")
         cleanUp(screen_name, api)
 
 
@@ -177,7 +177,7 @@ def craft_rotation():
 
     # ツイート送信
     api.update_status(tweet_content)
-    print("Tweet(craft rotation) has been sent.")
+    print("(Craft)Tweet has been sent.")
 
 
 def store_info():
@@ -203,7 +203,8 @@ def store_info():
     for item in json_shop:
         if len(item['pricing']) > 1:
             recolor_skins_json.append(item)
-    recolor_skins_json_sorted = sorted(recolor_skins_json.json)
+    recolor_skins_json_sorted = sorted(
+        recolor_skins_json, key=lambda x: x['content'][0]['name'])
 
     # ツイート内容
     tweet_segment = ["【色違いスキン ストア情報】\n",
@@ -247,13 +248,13 @@ def store_info():
     for tweet in tweets:
         if tweet.text == tweet_content:
             isnt_tweeted = False
-            print("This tweet was already sent")
+            print("(Store)This tweet was already sent")
             break
 
     # ツイート送信
     if isnt_tweeted:
         twitter.post(url_text, params=params)
-        print("Tweet(recolor store info) has been sent.")
+        print("(Store)Tweet has been sent.")
 
 
 # APSchedulerの変数を作成
