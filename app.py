@@ -246,7 +246,7 @@ def store_info():
     isnt_tweeted = True
     tweets = api.user_timeline(screen_name=screen_name, count=15)
     for tweet in tweets:
-        if tweet.text == tweet_content:
+        if tweet_content in tweet.text:
             isnt_tweeted = False
             print("(Store)This tweet was already sent")
             break
@@ -262,7 +262,7 @@ scheduler = BlockingScheduler()
 
 scheduler.add_job(map_rotation, 'cron', minute='0,30')
 scheduler.add_job(craft_rotation, 'cron', hour=18)
-scheduler.add_job(store_info, 'cron', hour=21)
+scheduler.add_job(store_info, 'cron', hour='18,21', minute=30)
 
 # APSchedulerを開始
 try:
