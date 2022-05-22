@@ -257,12 +257,64 @@ def store_info():
         print("(Store)Tweet has been sent.")
 
 
+def predator():
+    time.sleep(10)
+    # プレデターボーダーの情報取得
+    url_pred = "https://api.mozambiquehe.re/predator?auth="
+    als_api_key = settings.ALS_API_KEY
+    res_pred = requests.get(url_pred + als_api_key)
+    json_pred = json.loads(res_pred.text)
+    if res_pred.status_code == 200:
+        print("(ALS)Request succeeded")
+    else:
+        print("(ALS)Request failed with " + str(res_pred.status_code))
+        sys.exit()
+
+    br_pred_cap = json_pred['RP']
+    ar_pred_cap = json_pred['AP']
+
+    # ツイート内容
+    tweet_segment = ["【バトロワ プレデターボーダー】\n",
+                     "PC    :"+str(br_pred_cap['PC']['val']),
+                     "RP\n" if br_pred_cap['PC']['val'] > 15000 else "RP(現在"+str(
+                         br_pred_cap['PC']['totalMastersAndPreds'])+"人)\n",
+                     "PS4/5 :"+str(br_pred_cap['PS4']['val']),
+                     "RP\n" if br_pred_cap['PS4']['val'] > 15000 else "RP(現在"+str(
+                         br_pred_cap['PS4']['totalMastersAndPreds'])+"人)\n",
+                     "Switch:"+str(br_pred_cap['SWITCH']['val']),
+                     "RP\n" if br_pred_cap['SWITCH']['val'] > 15000 else "RP(現在"+str(
+                         br_pred_cap['SWITCH']['totalMastersAndPreds'])+"人)\n",
+                     "【アリーナ プレデターボーダー】\n",
+                     "PC    :"+str(ar_pred_cap['PC']['val']),
+                     "AP\n" if ar_pred_cap['PC']['val'] > 8000 else "AP(現在"+str(
+                         ar_pred_cap['PC']['totalMastersAndPreds'])+"人)\n",
+                     "PS4/5 :"+str(ar_pred_cap['PS4']['val']),
+                     "AP\n" if ar_pred_cap['PS4']['val'] > 8000 else "AP(現在"+str(
+                         ar_pred_cap['PS4']['totalMastersAndPreds'])+"人)\n",
+                     "Switch:"+str(ar_pred_cap['SWITCH']['val']),
+                     "AP\n" if ar_pred_cap['SWITCH']['val'] > 8000 else "AP(現在"+str(
+                         ar_pred_cap['SWITCH']['totalMastersAndPreds'])+"人)\n"]
+    tweet_content = ""
+    for i in range(len(tweet_segment)):
+        tweet_content = tweet_content + tweet_segment[i]
+
+    # APIインスタンスを作成
+    auth = tweepy.OAuthHandler(settings.API_KEY, settings.API_SECRET_KEY)
+    auth.set_access_token(settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
+    api = tweepy.API(auth)
+
+    # ツイート送信
+    api.update_status(tweet_content)
+    print("(Predator)Tweet has been sent.")
+
+
 # APSchedulerの変数を作成
 scheduler = BlockingScheduler()
 
 scheduler.add_job(map_rotation, 'cron', minute='0,30')
 scheduler.add_job(craft_rotation, 'cron', hour=18)
 scheduler.add_job(store_info, 'cron', hour='18,21', minute=30)
+scheduler.add_job(predator, 'cron', hour=15)
 
 # APSchedulerを開始
 try:
