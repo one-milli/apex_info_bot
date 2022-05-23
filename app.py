@@ -208,10 +208,10 @@ def store_info():
 
     # ツイート内容
     tweet_segment = ["【色違いスキン ストア情報】\n",
-                     "(1)"+recolor_skins_json[0]['content'][0]['name']+"\n",
+                     "・"+recolor_skins_json[0]['content'][0]['name']+"\n",
                      "("+names_jp.get(recolor_skins_json_sorted[0]['whose'],
                                       recolor_skins_json_sorted[0]['whose'])+"のスキン)\n\n",
-                     "(2)"+recolor_skins_json[1]['content'][0]['name']+"\n",
+                     "・"+recolor_skins_json[1]['content'][0]['name']+"\n",
                      "("+names_jp.get(recolor_skins_json_sorted[1]['whose'],
                                       recolor_skins_json_sorted[1]['whose'])+"のスキン)"]
     tweet_content = ""
@@ -274,7 +274,7 @@ def predator():
     # ar_pred_cap = json_pred['AP']
 
     # ツイート内容
-    tweet_segment = ["【プレデターボーダー"+chr(128121)+"】\n",
+    tweet_segment = [chr(128121)+"現在のプレデターボーダー"+chr(128121)+"\n",
                      "PC    :"+str(br_pred_cap['PC']['val']),
                      "RP\n" if br_pred_cap['PC']['val'] > 15000 else "RP(現在"+str(
                          br_pred_cap['PC']['totalMastersAndPreds'])+"人)\n",
