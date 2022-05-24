@@ -275,7 +275,7 @@ def predator():
 
     # ツイート内容
     tweet_segment = [chr(128121)+"現在のプレデターボーダー"+chr(128121)+"\n",
-                     "PC    :"+str(br_pred_cap['PC']['val']),
+                     "PC      :"+str(br_pred_cap['PC']['val']),
                      "RP\n" if br_pred_cap['PC']['val'] > 15000 else "RP(現在"+str(
                          br_pred_cap['PC']['totalMastersAndPreds'])+"人)\n",
                      "PS4/5 :"+str(br_pred_cap['PS4']['val']),
