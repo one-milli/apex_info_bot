@@ -199,9 +199,10 @@ def store_info():
 
     appendName(json_shop)
     recolor_skins_json = []
+    now = int(time.time())
     # リカラースキンのみ取り出し
     for item in json_shop:
-        if len(item['pricing']) > 1:
+        if len(item['pricing']) > 1 and item['expireTimestamp'] > now:
             recolor_skins_json.append(item)
     recolor_skins_json_sorted = sorted(
         recolor_skins_json, key=lambda x: x['content'][0]['name'])
@@ -303,7 +304,7 @@ scheduler = BlockingScheduler()
 
 scheduler.add_job(map_rotation, 'cron', minute='0,30')
 scheduler.add_job(craft_rotation, 'cron', hour=18)
-scheduler.add_job(store_info, 'cron', hour='18,21', minute=30)
+scheduler.add_job(store_info, 'cron', hour='18,21', minute=15)
 scheduler.add_job(predator, 'cron', hour=15)
 
 # APSchedulerを開始
