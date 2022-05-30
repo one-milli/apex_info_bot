@@ -209,10 +209,12 @@ def store_info():
 
     # ツイート内容
     tweet_segment = ["【色違いスキン ストア情報】\n",
-                     "・"+recolor_skins_json[0]['content'][0]['name']+"\n",
+                     "・" +
+                     recolor_skins_json_sorted[0]['content'][0]['name']+"\n",
                      "("+names_jp.get(recolor_skins_json_sorted[0]['whose'],
                                       recolor_skins_json_sorted[0]['whose'])+"のスキン)\n\n",
-                     "・"+recolor_skins_json[1]['content'][0]['name']+"\n",
+                     "・" +
+                     recolor_skins_json_sorted[1]['content'][0]['name']+"\n",
                      "("+names_jp.get(recolor_skins_json_sorted[1]['whose'],
                                       recolor_skins_json_sorted[1]['whose'])+"のスキン)"]
     tweet_content = ""
@@ -299,13 +301,19 @@ def predator():
     print("(Predator)Tweet has been sent.")
 
 
+def debug():
+    sys.exit()
+
+
+# debug()
+
 # APSchedulerの変数を作成
 scheduler = BlockingScheduler()
 
 scheduler.add_job(map_rotation, 'cron', minute='0,30')
-scheduler.add_job(craft_rotation, 'cron', hour=18)
-scheduler.add_job(store_info, 'cron', hour='18,19,21', minute='0,15,30,45')
-scheduler.add_job(predator, 'cron', hour=15)
+scheduler.add_job(craft_rotation, 'cron', hour='18')
+scheduler.add_job(store_info, 'cron', hour='18,19,20,21', minute='30')
+scheduler.add_job(predator, 'cron', hour='15')
 
 # APSchedulerを開始
 try:
