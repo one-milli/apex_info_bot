@@ -274,10 +274,11 @@ def predator():
         sys.exit()
 
     br_pred_cap = json_pred['RP']
-    # ar_pred_cap = json_pred['AP']
+    ar_pred_cap = json_pred['AP']
 
     # ツイート内容
-    tweet_segment = [chr(128121)+"現在のプレデターボーダー"+chr(128121)+"\n",
+    tweet_segment = ["【現在のプレデターボーダー】\n",
+                     chr(128121)+"バトロワ\n",
                      "PC      :"+str(br_pred_cap['PC']['val']),
                      "RP\n" if br_pred_cap['PC']['val'] > 15000 else "RP(現在"+str(
                          br_pred_cap['PC']['totalMastersAndPreds'])+"人)\n",
@@ -286,7 +287,17 @@ def predator():
                          br_pred_cap['PS4']['totalMastersAndPreds'])+"人)\n",
                      "Switch:"+str(br_pred_cap['SWITCH']['val']),
                      "RP\n" if br_pred_cap['SWITCH']['val'] > 15000 else "RP(現在"+str(
-                         br_pred_cap['SWITCH']['totalMastersAndPreds'])+"人)\n"]
+                         br_pred_cap['SWITCH']['totalMastersAndPreds'])+"人)\n",
+                     chr(128121)+"アリーナ\n",
+                     "PC      :"+str(ar_pred_cap['PC']['val']),
+                     "AP\n" if ar_pred_cap['PC']['val'] > 8000 else "AP(現在"+str(
+                         ar_pred_cap['PC']['totalMastersAndPreds'])+"人)\n",
+                     "PS4/5 :"+str(ar_pred_cap['PS4']['val']),
+                     "AP\n" if ar_pred_cap['PS4']['val'] > 8000 else "AP(現在"+str(
+                         ar_pred_cap['PS4']['totalMastersAndPreds'])+"人)\n",
+                     "Switch:"+str(ar_pred_cap['SWITCH']['val']),
+                     "AP\n" if ar_pred_cap['SWITCH']['val'] > 8000 else "AP(現在"+str(
+                         ar_pred_cap['SWITCH']['totalMastersAndPreds'])+"人)"]
     tweet_content = ""
     for i in range(len(tweet_segment)):
         tweet_content = tweet_content + tweet_segment[i]
