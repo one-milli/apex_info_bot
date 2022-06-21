@@ -204,6 +204,8 @@ def store_info():
     for item in json_shop:
         if len(item['pricing']) > 1 and item['expireTimestamp'] > now:
             recolor_skins_json.append(item)
+    if len(recolor_skins_json) == 0:
+        sys.exit()
     recolor_skins_json_sorted = sorted(
         recolor_skins_json, key=lambda x: x['content'][0]['name'])
 
