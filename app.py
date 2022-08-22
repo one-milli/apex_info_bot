@@ -132,7 +132,8 @@ def craft_rotation():
                        "boosted_loader": "ブーステッドローダー",
                        "turbocharger": "ターボチャージャー",
                        "double_tap": "ダブルタップ",
-                       "skull_piercer": "スカルピアサー"}
+                       "skull_piercer": "スカルピアサー",
+                       "laser_sight": "レーザーサイト Lv3"}
     item_list_weekly = {"backpack": "バックパック Lv3",
                         "helmet": "ヘルメット Lv3",
                         "knockdown_shield": "ノックダウンシールド Lv3",
