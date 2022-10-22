@@ -41,7 +41,7 @@ def map_rotation():
     time.sleep(5)
     screen_name = "ApexMapBot"
     map_list = {"Kings Canyon": {"name": "キングスキャニオン", "emoji": 127964}, "World's Edge": {"name": "ワールズエッジ", "emoji": 127755},
-                "Olympus": {"name": "オリンパス", "emoji": 127961}, "Storm Point": {"name": "ストームポイント", "emoji": 127965}}
+                "Olympus": {"name": "オリンパス", "emoji": 127961}, "Storm Point": {"name": "ストームポイント", "emoji": 127965}, "Stella": {"name": "ステラ", "emoji": 127773}}
 
     # マップローテーションの取得
     url_map = "https://api.mozambiquehe.re/maprotation?auth="
