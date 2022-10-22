@@ -186,8 +186,10 @@ def craft_rotation():
 def store_info():
     time.sleep(10)
     screen_name = "ApexMapBot"
-    json_op = open('names_jp.json', encoding='utf-8')
-    names_jp = json.load(json_op)
+    json_op1 = open('names_jp.json', encoding='utf-8')
+    names_jp = json.load(json_op1)
+    json_op2 = open('skin_database.json', encoding='utf-8')
+    skins_jp = json.load(json_op2)
 
     # ストア情報の取得
     url_shop = "https://api.mozambiquehe.re/store?auth="
@@ -204,24 +206,25 @@ def store_info():
     recolor_skins_json = []
     now = int(time.time())
     # リカラースキンのみ取り出し
+    sum = 0
     for item in json_shop:
         if len(item['pricing']) > 1 and item['expireTimestamp'] > now:
             recolor_skins_json.append(item)
+            sum += 1
     if len(recolor_skins_json) == 0:
         sys.exit()
     recolor_skins_json_sorted = sorted(
         recolor_skins_json, key=lambda x: x['content'][0]['name'])
 
     # ツイート内容
-    tweet_segment = ["【色違いスキン ストア情報】\n",
-                     "・" +
-                     recolor_skins_json_sorted[0]['content'][0]['name']+"\n",
-                     "("+names_jp.get(recolor_skins_json_sorted[0]['whose'],
-                                      recolor_skins_json_sorted[0]['whose'])+"のスキン)\n\n",
-                     "・" +
-                     recolor_skins_json_sorted[1]['content'][0]['name']+"\n",
-                     "("+names_jp.get(recolor_skins_json_sorted[1]['whose'],
-                                      recolor_skins_json_sorted[1]['whose'])+"のスキン)"]
+    skin_key = []
+    tweet_segment = ["【色違いスキン ストア情報】\n"]
+    for i in range(sum):
+        skin_key[i] = recolor_skins_json_sorted[i]['content'][0]['name']
+        skin_name = skins_jp.get(skin_key[i], skin_key[i])
+        tweet_segment.append("・" + skin_name)
+        if i != sum:
+            tweet_segment.append("\n\n")
     tweet_content = ""
     for i in range(len(tweet_segment)):
         tweet_content = tweet_content + tweet_segment[i]
@@ -232,7 +235,8 @@ def store_info():
     url_text = "https://api.twitter.com/1.1/statuses/update.json"
 
     media_id = []
-    for i in range(2):
+    m = min(sum, 4)
+    for i in range(m):
         headers = {"User-Agent": "Mozilla/5.0"}
         request = urllib.request.Request(
             url=recolor_skins_json_sorted[i]['asset'], headers=headers)
