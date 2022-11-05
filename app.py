@@ -186,9 +186,9 @@ def craft_rotation():
 def store_info():
     time.sleep(10)
     screen_name = "ApexMapBot"
-    json_op1 = open('names_jp.json', encoding='utf-8')
-    names_jp = json.load(json_op1)
-    json_op2 = open('skin_database.json', encoding='utf-8')
+    # json_op1 = open('names_jp.json', encoding='utf-8')
+    # names_jp = json.load(json_op1)
+    json_op2 = open('skins_jp.json', encoding='utf-8')
     skins_jp = json.load(json_op2)
 
     # ストア情報の取得
@@ -209,8 +209,9 @@ def store_info():
     sum = 0
     for item in json_shop:
         if len(item['pricing']) > 1 and item['expireTimestamp'] > now:
-            recolor_skins_json.append(item)
-            sum += 1
+            if item['pricing'][0]['ref'] == 'Legend Tokens':
+                recolor_skins_json.append(item)
+                sum += 1
     if len(recolor_skins_json) == 0:
         sys.exit()
     recolor_skins_json_sorted = sorted(
@@ -220,8 +221,8 @@ def store_info():
     skin_key = []
     tweet_segment = ["【色違いスキン ストア情報】\n"]
     for i in range(sum):
-        skin_key[i] = recolor_skins_json_sorted[i]['content'][0]['name']
-        skin_name = skins_jp.get(skin_key[i], skin_key[i])
+        skin_key = recolor_skins_json_sorted[i]['content'][0]['name']
+        skin_name = skins_jp.get(skin_key, skin_key)
         tweet_segment.append("・" + skin_name)
         if i != sum:
             tweet_segment.append("\n\n")
