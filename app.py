@@ -131,8 +131,8 @@ def craft_rotation():
                        "hammerpoint_rounds": "ハンマーポイント",
                        "boosted_loader": "ブーステッドローダー",
                        "turbocharger": "ターボチャージャー",
-                       "double_tap": "ダブルタップ",
-                       "skull_piercer": "スカルピアサー",
+                       "double_tap_trigger": "ダブルタップ",
+                       "skullpiercer_rifling": "スカルピアサー",
                        "laser_sight": "レーザーサイト Lv3"}
     item_list_weekly = {"backpack": "バックパック Lv3",
                         "helmet": "ヘルメット Lv3",
@@ -186,8 +186,8 @@ def craft_rotation():
 def store_info():
     time.sleep(10)
     screen_name = "ApexMapBot"
-    # json_op1 = open('names_jp.json', encoding='utf-8')
-    # names_jp = json.load(json_op1)
+    json_op1 = open('names_jp.json', encoding='utf-8')
+    names_jp = json.load(json_op1)
     json_op2 = open('skins_jp.json', encoding='utf-8')
     skins_jp = json.load(json_op2)
 
@@ -221,9 +221,11 @@ def store_info():
     skin_key = []
     tweet_segment = ["【色違いスキン ストア情報】\n"]
     for i in range(sum):
+        name_key = recolor_skins_json_sorted[i]['whose']
         skin_key = recolor_skins_json_sorted[i]['content'][0]['name']
-        skin_name = skins_jp.get(skin_key, skin_key)
-        tweet_segment.append("・" + skin_name)
+        skin_jp = skins_jp.get(skin_key, skin_key)
+        name_jp = names_jp.get(name_key, name_key)
+        tweet_segment.append("・" + skin_jp + "\n(" + name_jp + ")")
         if i != sum:
             tweet_segment.append("\n\n")
     tweet_content = ""
