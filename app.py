@@ -173,13 +173,55 @@ def craft_rotation():
     for i in range(len(tweet_segment)):
         tweet_content = tweet_content + tweet_segment[i]
 
-    # APIインスタンスを作成
-    auth = tweepy.OAuthHandler(settings.API_KEY, settings.API_SECRET_KEY)
-    auth.set_access_token(settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
-    api = tweepy.API(auth)
+    twitter = OAuth1Session(settings.API_KEY, settings.API_SECRET_KEY,
+                            settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
+    url_media = "https://upload.twitter.com/1.1/media/upload.json"
+    url_text = "https://api.twitter.com/1.1/statuses/update.json"
+
+    media_id = []
+
+    headers = {"User-Agent": "Mozilla/5.0"}
+    request = urllib.request.Request(
+        url=daily_item_1['itemType']['asset'], headers=headers)
+    response = urllib.request.urlopen(request)
+    data = response.read()
+    files = {"media": data}
+    req_media = twitter.post(url_media, files=files)
+    media_id.append(json.loads(req_media.text)['media_id_string'])
+    print("Image uploaded (1)")
+
+    request = urllib.request.Request(
+        url=daily_item_2['itemType']['asset'], headers=headers)
+    response = urllib.request.urlopen(request)
+    data = response.read()
+    files = {"media": data}
+    req_media = twitter.post(url_media, files=files)
+    media_id.append(json.loads(req_media.text)['media_id_string'])
+    print("Image uploaded (2)")
+
+    request = urllib.request.Request(
+        url=weekly_item_1['itemType']['asset'], headers=headers)
+    response = urllib.request.urlopen(request)
+    data = response.read()
+    files = {"media": data}
+    req_media = twitter.post(url_media, files=files)
+    media_id.append(json.loads(req_media.text)['media_id_string'])
+    print("Image uploaded (3)")
+
+    request = urllib.request.Request(
+        url=weekly_item_2['itemType']['asset'], headers=headers)
+    response = urllib.request.urlopen(request)
+    data = response.read()
+    files = {"media": data}
+    req_media = twitter.post(url_media, files=files)
+    media_id.append(json.loads(req_media.text)['media_id_string'])
+    print("Image uploaded (4)")
+
+    media_id = ','.join(media_id)
+    params = {"status": tweet_content, "media_ids": media_id}
 
     # ツイート送信
-    api.update_status(tweet_content)
+    twitter.post(url_text, params=params)
     print("(Craft)Tweet has been sent.")
 
 
