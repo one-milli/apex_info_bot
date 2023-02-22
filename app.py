@@ -9,6 +9,9 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime, timedelta, timezone
 from requests_oauthlib import OAuth1Session
 
+map_list = {"Kings Canyon": {"name": "キングスキャニオン", "emoji": 127964}, "World's Edge": {"name": "ワールズエッジ", "emoji": 127755},
+            "Olympus": {"name": "オリンパス", "emoji": 127961}, "Storm Point": {"name": "ストームポイント", "emoji": 127965}, "Broken Moon": {"name": "ブロークンムーン", "emoji": 127768}}
+
 
 # 送信から6時間以上経ったマップ情報ツイートを削除
 def cleanUp(screen_name, api):
@@ -40,8 +43,6 @@ def appendName(json_input):
 def map_rotation():
     time.sleep(5)
     screen_name = "ApexMapBot"
-    map_list = {"Kings Canyon": {"name": "キングスキャニオン", "emoji": 127964}, "World's Edge": {"name": "ワールズエッジ", "emoji": 127755},
-                "Olympus": {"name": "オリンパス", "emoji": 127961}, "Storm Point": {"name": "ストームポイント", "emoji": 127965}, "Broken Moon": {"name": "ブロークンムーン", "emoji": 127768}}
 
     # マップローテーションの取得
     url_map = "https://api.mozambiquehe.re/maprotation?auth="
@@ -112,7 +113,7 @@ def map_rotation():
 
 
 def craft_rotation():
-    time.sleep(10)
+    time.sleep(15)
     item_list_daily = {"extended_light_mag": "拡張ライトマガジン Lv3",
                        "extended_heavy_mag": "拡張ヘビーマガジン Lv3",
                        "extended_energy_mag": "拡張エネルギーマガジン Lv3",
@@ -227,11 +228,15 @@ def craft_rotation():
 
 
 def predator():
-    time.sleep(10)
+    time.sleep(5)
     # プレデターボーダーの情報取得
+    url_map = "https://api.mozambiquehe.re/maprotation?version=2&auth="
     url_pred = "https://api.mozambiquehe.re/predator?auth="
     als_api_key = settings.ALS_API_KEY
+    res_map = requests.get(url_map + als_api_key)
+    time.sleep(2)
     res_pred = requests.get(url_pred + als_api_key)
+    json_map = json.loads(res_map.text)
     json_pred = json.loads(res_pred.text)
     if res_pred.status_code == 200:
         print("(ALS)Request succeeded")
@@ -239,12 +244,14 @@ def predator():
         print("(ALS)Request failed with " + str(res_pred.status_code))
         sys.exit()
 
+    current_map = json_map['ranked']['current']['map']
     br_pred_cap = json_pred['RP']
-    ar_pred_cap = json_pred['AP']
 
     # ツイート内容
-    tweet_segment = ["【現在のプレデターボーダー】\n",
-                     chr(128121)+"バトロワ\n",
+    tweet_segment = ["【現在のランクマップ】\n",
+                     chr(map_list[current_map]['emoji']),
+                     map_list[current_map]['name'],
+                     "\n\n【現在のプレデターボーダー】\n",
                      "PC      :"+str(br_pred_cap['PC']['val']),
                      "RP\n" if br_pred_cap['PC']['val'] > 15000 else "RP(現在"+str(
                          br_pred_cap['PC']['totalMastersAndPreds'])+"人)\n",
@@ -253,17 +260,7 @@ def predator():
                          br_pred_cap['PS4']['totalMastersAndPreds'])+"人)\n",
                      "Switch:"+str(br_pred_cap['SWITCH']['val']),
                      "RP\n" if br_pred_cap['SWITCH']['val'] > 15000 else "RP(現在"+str(
-                         br_pred_cap['SWITCH']['totalMastersAndPreds'])+"人)\n",
-                     chr(128121)+"アリーナ\n",
-                     "PC      :"+str(ar_pred_cap['PC']['val']),
-                     "AP\n" if ar_pred_cap['PC']['val'] > 8000 else "AP(現在"+str(
-                         ar_pred_cap['PC']['totalMastersAndPreds'])+"人)\n",
-                     "PS4/5 :"+str(ar_pred_cap['PS4']['val']),
-                     "AP\n" if ar_pred_cap['PS4']['val'] > 8000 else "AP(現在"+str(
-                         ar_pred_cap['PS4']['totalMastersAndPreds'])+"人)\n",
-                     "Switch:"+str(ar_pred_cap['SWITCH']['val']),
-                     "AP\n" if ar_pred_cap['SWITCH']['val'] > 8000 else "AP(現在"+str(
-                         ar_pred_cap['SWITCH']['totalMastersAndPreds'])+"人)"]
+                         br_pred_cap['SWITCH']['totalMastersAndPreds'])+"人)"]
     tweet_content = ""
     for i in range(len(tweet_segment)):
         tweet_content = tweet_content + tweet_segment[i]
@@ -373,7 +370,7 @@ scheduler = BlockingScheduler()
 
 scheduler.add_job(map_rotation, 'cron', minute='0,30')
 scheduler.add_job(craft_rotation, 'cron', hour='18')
-scheduler.add_job(predator, 'cron', hour='15')
+scheduler.add_job(predator, 'cron', hour='18')
 # scheduler.add_job(store_info, 'cron', hour='18,19,20,21', minute='15,45')
 
 # APSchedulerを開始
