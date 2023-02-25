@@ -369,8 +369,8 @@ def store_info():
 scheduler = BlockingScheduler()
 
 scheduler.add_job(map_rotation, 'cron', minute='0,30')
-scheduler.add_job(craft_rotation, 'cron', hour='18', minute='5')
-scheduler.add_job(predator, 'cron', hour='18')
+scheduler.add_job(craft_rotation, 'cron', hour='18', minute='1')
+scheduler.add_job(predator, 'cron', hour='6,18')
 # scheduler.add_job(store_info, 'cron', hour='18,19,20,21', minute='15,45')
 
 # APSchedulerを開始
