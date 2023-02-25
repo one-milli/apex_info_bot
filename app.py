@@ -113,7 +113,7 @@ def map_rotation():
 
 
 def craft_rotation():
-    time.sleep(15)
+    time.sleep(10)
     item_list_daily = {"extended_light_mag": "拡張ライトマガジン Lv3",
                        "extended_heavy_mag": "拡張ヘビーマガジン Lv3",
                        "extended_energy_mag": "拡張エネルギーマガジン Lv3",
@@ -228,13 +228,13 @@ def craft_rotation():
 
 
 def predator():
-    time.sleep(5)
+    time.sleep(10)
     # プレデターボーダーの情報取得
     url_map = "https://api.mozambiquehe.re/maprotation?version=2&auth="
     url_pred = "https://api.mozambiquehe.re/predator?auth="
     als_api_key = settings.ALS_API_KEY
     res_map = requests.get(url_map + als_api_key)
-    time.sleep(2)
+    time.sleep(5)
     res_pred = requests.get(url_pred + als_api_key)
     json_map = json.loads(res_map.text)
     json_pred = json.loads(res_pred.text)
@@ -369,7 +369,7 @@ def store_info():
 scheduler = BlockingScheduler()
 
 scheduler.add_job(map_rotation, 'cron', minute='0,30')
-scheduler.add_job(craft_rotation, 'cron', hour='18')
+scheduler.add_job(craft_rotation, 'cron', hour='18', minute='5')
 scheduler.add_job(predator, 'cron', hour='18')
 # scheduler.add_job(store_info, 'cron', hour='18,19,20,21', minute='15,45')
 
