@@ -248,7 +248,7 @@ def predator():
     br_pred_cap = json_pred['RP']
 
     # ツイート内容
-    tweet_segment = ["【現在のランクマップ】\n",
+    tweet_segment = ["【本日のランクマップ】\n",
                      chr(map_list[current_map]['emoji']),
                      map_list[current_map]['name'],
                      "\n\n【現在のプレデターボーダー】\n",
