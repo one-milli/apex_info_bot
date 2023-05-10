@@ -8,7 +8,6 @@ import urllib.request
 from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime, timedelta, timezone
 from requests_oauthlib import OAuth1Session
-from keep_alive import keep_alive
 
 map_list = {"Kings Canyon": {"name": "キングスキャニオン", "emoji": 127964}, "World's Edge": {"name": "ワールズエッジ", "emoji": 127755},
             "Olympus": {"name": "オリンパス", "emoji": 127961}, "Storm Point": {"name": "ストームポイント", "emoji": 127965}, "Broken Moon": {"name": "ブロークンムーン", "emoji": 127768}}
@@ -377,7 +376,6 @@ if __name__ == '__main__':
 
     # APSchedulerを開始
     try:
-        keep_alive()
         scheduler.start()
     except (KeyboardInterrupt, SystemExit):
         pass
