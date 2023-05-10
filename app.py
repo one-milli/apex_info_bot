@@ -5,7 +5,7 @@ import sys
 import time
 import tweepy
 import urllib.request
-from apscheduler.schedulers.blocking import BlockingScheduler
+# from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime, timedelta, timezone
 from requests_oauthlib import OAuth1Session
 
@@ -42,7 +42,6 @@ def appendName(json_input):
 
 
 def map_rotation():
-    time.sleep(5)
     screen_name = "ApexMapBot"
 
     # マップローテーションの取得
@@ -114,7 +113,6 @@ def map_rotation():
 
 
 def craft_rotation():
-    time.sleep(10)
     item_list_daily = {"extended_light_mag": "拡張ライトマガジン Lv3",
                        "extended_heavy_mag": "拡張ヘビーマガジン Lv3",
                        "extended_energy_mag": "拡張エネルギーマガジン Lv3",
@@ -229,13 +227,12 @@ def craft_rotation():
 
 
 def predator():
-    time.sleep(10)
     # プレデターボーダーの情報取得
     url_map = "https://api.mozambiquehe.re/maprotation?version=2&auth="
     url_pred = "https://api.mozambiquehe.re/predator?auth="
     als_api_key = settings.ALS_API_KEY
     res_map = requests.get(url_map + als_api_key)
-    time.sleep(5)
+    time.sleep(3)
     res_pred = requests.get(url_pred + als_api_key)
     json_map = json.loads(res_map.text)
     json_pred = json.loads(res_pred.text)
@@ -365,7 +362,23 @@ def predator():
         print("(Store)Tweet has been sent.")
  """
 
-if __name__ == '__main__':
+
+def tweet(event, context):
+    JST = timezone(timedelta(hours=+9), 'JST')
+    dt_now = datetime.now(JST)
+    if(dt_now.hour == 2 and dt_now.minute < 10):
+        time.sleep(3)
+        map_rotation()
+        time.sleep(3)
+        predator()
+        time.sleep(3)
+        craft_rotation()
+    else:
+        time.sleep(3)
+        map_rotation()
+
+
+""" if __name__ == '__main__':
     # APSchedulerの変数を作成
     scheduler = BlockingScheduler()
 
@@ -378,4 +391,4 @@ if __name__ == '__main__':
     try:
         scheduler.start()
     except (KeyboardInterrupt, SystemExit):
-        pass
+        pass """
