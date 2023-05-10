@@ -29,7 +29,7 @@ def cleanUp(screen_name, api):
             print("Tweet(ID:"+str(tweet.id)+") has been deleted")
 
 
-# そのスキンのキャラ/武器名をjsonに追加
+""" # そのスキンのキャラ/武器名をjsonに追加
 def appendName(json_input):
     tgt_start = "_skin_"
     tgt_end = "_"
@@ -38,6 +38,7 @@ def appendName(json_input):
         buff = item['content'][0]['ref'][idx_start+6:]
         idx_end = buff.find(tgt_end)
         item['whose'] = buff[:idx_end]
+ """
 
 
 def map_rotation():
@@ -275,7 +276,7 @@ def predator():
     print("(Predator)Tweet has been sent.")
 
 
-def store_info():
+""" def store_info():
     time.sleep(10)
     screen_name = "ApexMapBot"
     json_op1 = open('names_jp.json', encoding='utf-8')
@@ -362,14 +363,14 @@ def store_info():
     if isnt_tweeted:
         twitter.post(url_text, params=params)
         print("(Store)Tweet has been sent.")
-
+ """
 
 # Heroku
 # APSchedulerの変数を作成
 scheduler = BlockingScheduler()
 
 scheduler.add_job(map_rotation, 'cron', minute='0,30')
-scheduler.add_job(craft_rotation, 'cron', hour='18', minute='1')
+scheduler.add_job(craft_rotation, 'cron', hour='17', minute='1')
 scheduler.add_job(predator, 'cron', hour='17')
 # scheduler.add_job(store_info, 'cron', hour='18,19,20,21', minute='15,45')
 
