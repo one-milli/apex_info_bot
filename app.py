@@ -365,17 +365,17 @@ def predator():
         print("(Store)Tweet has been sent.")
  """
 
-# Heroku
-# APSchedulerの変数を作成
-scheduler = BlockingScheduler()
+if __name__ == '__main__':
+    # APSchedulerの変数を作成
+    scheduler = BlockingScheduler()
 
-scheduler.add_job(map_rotation, 'cron', minute='0,30')
-scheduler.add_job(craft_rotation, 'cron', hour='17', minute='1')
-scheduler.add_job(predator, 'cron', hour='17')
-# scheduler.add_job(store_info, 'cron', hour='18,19,20,21', minute='15,45')
+    scheduler.add_job(map_rotation, 'cron', minute='0,30')
+    scheduler.add_job(craft_rotation, 'cron', hour='17', minute='1')
+    scheduler.add_job(predator, 'cron', hour='17')
+    # scheduler.add_job(store_info, 'cron', hour='18,19,20,21', minute='15,45')
 
-# APSchedulerを開始
-try:
-    scheduler.start()
-except (KeyboardInterrupt, SystemExit):
-    pass
+    # APSchedulerを開始
+    try:
+        scheduler.start()
+    except (KeyboardInterrupt, SystemExit):
+        pass
