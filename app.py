@@ -253,13 +253,13 @@ def predator():
                      map_list[current_map]['name'],
                      "\n\n【現在のプレデターボーダー】\n",
                      "PC      :"+str(br_pred_cap['PC']['val']),
-                     "RP\n" if br_pred_cap['PC']['val'] > 15000 else "RP(現在"+str(
+                     "LP\n" if br_pred_cap['PC']['val'] > 24000 else "LP(現在"+str(
                          br_pred_cap['PC']['totalMastersAndPreds'])+"人)\n",
                      "PS4/5 :"+str(br_pred_cap['PS4']['val']),
-                     "RP\n" if br_pred_cap['PS4']['val'] > 15000 else "RP(現在"+str(
+                     "LP\n" if br_pred_cap['PS4']['val'] > 24000 else "LP(現在"+str(
                          br_pred_cap['PS4']['totalMastersAndPreds'])+"人)\n",
                      "Switch:"+str(br_pred_cap['SWITCH']['val']),
-                     "RP\n" if br_pred_cap['SWITCH']['val'] > 15000 else "RP(現在"+str(
+                     "LP\n" if br_pred_cap['SWITCH']['val'] > 24000 else "LP(現在"+str(
                          br_pred_cap['SWITCH']['totalMastersAndPreds'])+"人)"]
     tweet_content = ""
     for i in range(len(tweet_segment)):
