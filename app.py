@@ -5,12 +5,37 @@ import sys
 import time
 import tweepy
 import urllib.request
-# from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime, timedelta, timezone
 from requests_oauthlib import OAuth1Session
 
 map_list = {"Kings Canyon": {"name": "キングスキャニオン", "emoji": 127964}, "World's Edge": {"name": "ワールズエッジ", "emoji": 127755},
             "Olympus": {"name": "オリンパス", "emoji": 127961}, "Storm Point": {"name": "ストームポイント", "emoji": 127965}, "Broken Moon": {"name": "ブロークンムーン", "emoji": 127768}}
+item_list_daily = {"extended_light_mag": "拡張ライトマガジン Lv3",
+                   "extended_heavy_mag": "拡張ヘビーマガジン Lv3",
+                   "extended_energy_mag": "拡張エネルギーマガジン Lv3",
+                   "extended_sniper_mag": "拡張スナイパーマガジン Lv3",
+                   "shotgun_bolt": "ショットガンボルト Lv3",
+                   "barrel_stabilizer": "バレルスタビライザー Lv3",
+                   "standard_stock": "標準ストック Lv3",
+                   "sniper_stock": "スナイパーストック Lv3",
+                   "optic_hcog_bruiser": "2倍HCOG'ブルーザー'",
+                   "optic_hcog_ranger": "3倍HCOG'レンジャー'",
+                   "optic_variable_aog": "2~4倍可変式AOG",
+                   "optic_digital_threat": "1倍デジタルスレット",
+                   "optic_variable_sniper": "4~8倍可変式スナイパー",
+                   "shatter_caps": "シャッターキャップ",
+                   "kinetic_loader": "キネティックフィーダー",
+                   "hammerpoint_rounds": "ハンマーポイント",
+                   "boosted_loader": "ブーステッドローダー",
+                   "turbocharger": "ターボチャージャー",
+                   "double_tap_trigger": "ダブルタップ",
+                   "skullpiercer_rifling": "スカルピアサー",
+                   "laser_sight": "レーザーサイト Lv3",
+                   "anvil_receiver": "アンビルレシーバー"}
+item_list_weekly = {"backpack": "バックパック Lv3",
+                    "helmet": "ヘルメット Lv3",
+                    "knockdown_shield": "ノックダウンシールド Lv3",
+                    "mobile_respawn_beacon": "モバイルリスポーンビーコン"}
 
 
 # 送信から6時間以上経ったマップ情報ツイートを削除
@@ -29,7 +54,7 @@ def cleanUp(screen_name, api):
             print("Tweet(ID:"+str(tweet.id)+") has been deleted")
 
 
-""" # そのスキンのキャラ/武器名をjsonに追加
+# そのスキンのキャラ/武器名をjsonに追加
 def appendName(json_input):
     tgt_start = "_skin_"
     tgt_end = "_"
@@ -38,10 +63,10 @@ def appendName(json_input):
         buff = item['content'][0]['ref'][idx_start+6:]
         idx_end = buff.find(tgt_end)
         item['whose'] = buff[:idx_end]
- """
 
 
 def map_rotation():
+    time.sleep(5)
     screen_name = "ApexMapBot"
 
     # マップローテーションの取得
@@ -113,32 +138,7 @@ def map_rotation():
 
 
 def craft_rotation():
-    item_list_daily = {"extended_light_mag": "拡張ライトマガジン Lv3",
-                       "extended_heavy_mag": "拡張ヘビーマガジン Lv3",
-                       "extended_energy_mag": "拡張エネルギーマガジン Lv3",
-                       "extended_sniper_mag": "拡張スナイパーマガジン Lv3",
-                       "shotgun_bolt": "ショットガンボルト Lv3",
-                       "barrel_stabilizer": "バレルスタビライザー Lv3",
-                       "standard_stock": "標準ストック Lv3",
-                       "sniper_stock": "スナイパーストック Lv3",
-                       "optic_hcog_bruiser": "2倍HCOG'ブルーザー'",
-                       "optic_hcog_ranger": "3倍HCOG'レンジャー'",
-                       "optic_variable_aog": "2~4倍可変式AOG",
-                       "optic_digital_threat": "1倍デジタルスレット",
-                       "optic_variable_sniper": "4~8倍可変式スナイパー",
-                       "shatter_caps": "シャッターキャップ",
-                       "kinetic_loader": "キネティックフィーダー",
-                       "hammerpoint_rounds": "ハンマーポイント",
-                       "boosted_loader": "ブーステッドローダー",
-                       "turbocharger": "ターボチャージャー",
-                       "double_tap_trigger": "ダブルタップ",
-                       "skullpiercer_rifling": "スカルピアサー",
-                       "laser_sight": "レーザーサイト Lv3",
-                       "anvil_receiver": "アンビルレシーバー"}
-    item_list_weekly = {"backpack": "バックパック Lv3",
-                        "helmet": "ヘルメット Lv3",
-                        "knockdown_shield": "ノックダウンシールド Lv3",
-                        "mobile_respawn_beacon": "モバイルリスポーンビーコン"}
+    time.sleep(5)
 
     # クラフトローテーションの取得
     url_craft = "https://api.mozambiquehe.re/crafting?auth="
@@ -227,12 +227,13 @@ def craft_rotation():
 
 
 def predator():
+    time.sleep(5)
     # プレデターボーダーの情報取得
     url_map = "https://api.mozambiquehe.re/maprotation?version=2&auth="
     url_pred = "https://api.mozambiquehe.re/predator?auth="
     als_api_key = settings.ALS_API_KEY
     res_map = requests.get(url_map + als_api_key)
-    time.sleep(3)
+    time.sleep(5)
     res_pred = requests.get(url_pred + als_api_key)
     json_map = json.loads(res_map.text)
     json_pred = json.loads(res_pred.text)
@@ -273,7 +274,7 @@ def predator():
     print("(Predator)Tweet has been sent.")
 
 
-""" def store_info():
+def store_info():
     time.sleep(10)
     screen_name = "ApexMapBot"
     json_op1 = open('names_jp.json', encoding='utf-8')
@@ -360,35 +361,14 @@ def predator():
     if isnt_tweeted:
         twitter.post(url_text, params=params)
         print("(Store)Tweet has been sent.")
- """
 
 
 def tweet(event, context):
     JST = timezone(timedelta(hours=+9), 'JST')
     dt_now = datetime.now(JST)
     if(dt_now.hour == 2 and dt_now.minute < 10):
-        time.sleep(3)
         map_rotation()
-        time.sleep(3)
         predator()
-        time.sleep(3)
         craft_rotation()
     else:
-        time.sleep(3)
         map_rotation()
-
-
-""" if __name__ == '__main__':
-    # APSchedulerの変数を作成
-    scheduler = BlockingScheduler()
-
-    scheduler.add_job(map_rotation, 'cron', minute='0,30')
-    scheduler.add_job(craft_rotation, 'cron', hour='17', minute='1')
-    scheduler.add_job(predator, 'cron', hour='17')
-    # scheduler.add_job(store_info, 'cron', hour='18,19,20,21', minute='15,45')
-
-    # APSchedulerを開始
-    try:
-        scheduler.start()
-    except (KeyboardInterrupt, SystemExit):
-        pass """
