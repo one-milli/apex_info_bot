@@ -6,6 +6,7 @@ dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
 # Twitter API
+BEARER_TOKEN = os.environ.get("BEARER_TOKEN")
 API_KEY = os.environ.get("API_KEY")
 API_SECRET_KEY = os.environ.get("API_SECRET_KEY")
 ACCESS_TOKEN = os.environ.get("ACCESS_TOKEN")

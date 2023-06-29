@@ -39,6 +39,7 @@ item_list_weekly = {"backpack": "バックパック Lv3",
                     "mobile_respawn_beacon": "モバイルリスポーンビーコン"}
 
 # Twitter APIキー
+BEARER_TOKEN = settings.BEARER_TOKEN
 API_KEY = settings.API_KEY
 API_SECRET_KEY = settings.API_SECRET_KEY
 ACCESS_TOKEN = settings.ACCESS_TOKEN
@@ -47,7 +48,7 @@ ACCESS_TOKEN_SECRET = settings.ACCESS_TOKEN_SECRET
 ALS_API_KEY = settings.ALS_API_KEY
 
 # 認証
-client = tweepy.Client(API_KEY, API_SECRET_KEY,
+client = tweepy.Client(BEARER_TOKEN, API_KEY, API_SECRET_KEY,
                        ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 
 
