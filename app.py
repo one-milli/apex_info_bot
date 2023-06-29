@@ -8,6 +8,7 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 from requests_oauthlib import OAuth1Session
 
+# 和訳データ
 map_list = {"Kings Canyon": {"name": "キングスキャニオン", "emoji": 127964}, "World's Edge": {"name": "ワールズエッジ", "emoji": 127755},
             "Olympus": {"name": "オリンパス", "emoji": 127961}, "Storm Point": {"name": "ストームポイント", "emoji": 127965}, "Broken Moon": {"name": "ブロークンムーン", "emoji": 127768}}
 item_list_daily = {"extended_light_mag": "拡張ライトマガジン Lv3",
@@ -31,11 +32,23 @@ item_list_daily = {"extended_light_mag": "拡張ライトマガジン Lv3",
                    "double_tap_trigger": "ダブルタップ",
                    "skullpiercer_rifling": "スカルピアサー",
                    "laser_sight": "レーザーサイト Lv3",
-                   "anvil_receiver": "アンビルレシーバー"}
+                   "anvil_receiver": "ハンマーポイント"}
 item_list_weekly = {"backpack": "バックパック Lv3",
                     "helmet": "ヘルメット Lv3",
                     "knockdown_shield": "ノックダウンシールド Lv3",
                     "mobile_respawn_beacon": "モバイルリスポーンビーコン"}
+
+# Twitter APIキー
+API_KEY = settings.API_KEY
+API_SECRET_KEY = settings.API_SECRET_KEY
+ACCESS_TOKEN = settings.ACCESS_TOKEN
+ACCESS_TOKEN_SECRET = settings.ACCESS_TOKEN_SECRET
+# ALS APIキー
+ALS_API_KEY = settings.ALS_API_KEY
+
+# 認証
+client = tweepy.Client(API_KEY, API_SECRET_KEY,
+                       ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 
 
 # 送信から6時間以上経ったマップ情報ツイートを削除
@@ -71,8 +84,7 @@ def map_rotation():
 
     # マップローテーションの取得
     url_map = "https://api.mozambiquehe.re/maprotation?auth="
-    als_api_key = settings.ALS_API_KEY
-    res_map = requests.get(url_map + als_api_key)
+    res_map = requests.get(url_map + ALS_API_KEY)
     json_map = json.loads(res_map.text)
     if res_map.status_code == 200:
         print("(ALS)Request succeeded")
@@ -116,25 +128,9 @@ def map_rotation():
     for i in range(len(tweet_segment)):
         tweet_content = tweet_content + tweet_segment[i]
 
-    # APIインスタンスを作成
-    auth = tweepy.OAuthHandler(settings.API_KEY, settings.API_SECRET_KEY)
-    auth.set_access_token(settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
-    api = tweepy.API(auth)
-
-    # 自身の直近10ツイートを取得し，まだtweet_contentをツイートしていないことを確認
-    isnt_tweeted = True
-    tweets = api.user_timeline(screen_name=screen_name, count=10)
-    for tweet in tweets:
-        if tweet.text == tweet_content:
-            isnt_tweeted = False
-            print("(Map)This tweet was already sent")
-            break
-
-    # ツイート送信(まだtweet_contentをツイートしていないとき)
-    if isnt_tweeted:
-        api.update_status(tweet_content)
-        print("(Map)Tweet has been sent")
-        cleanUp(screen_name, api)
+    # ツイート送信
+    client.create_tweet(text=tweet_content)
+    print("(Map)Tweet has been sent")
 
 
 def craft_rotation():
@@ -142,8 +138,8 @@ def craft_rotation():
 
     # クラフトローテーションの取得
     url_craft = "https://api.mozambiquehe.re/crafting?auth="
-    als_api_key = settings.ALS_API_KEY
-    res_craft = requests.get(url_craft + als_api_key)
+    ALS_API_KEY = settings.ALS_API_KEY
+    res_craft = requests.get(url_craft + ALS_API_KEY)
     json_craft = json.loads(res_craft.text)
     if res_craft.status_code == 200:
         print("(ALS)Request succeeded")
@@ -174,8 +170,8 @@ def craft_rotation():
     for i in range(len(tweet_segment)):
         tweet_content = tweet_content + tweet_segment[i]
 
-    twitter = OAuth1Session(settings.API_KEY, settings.API_SECRET_KEY,
-                            settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
+    twitter = OAuth1Session(API_KEY, API_SECRET_KEY,
+                            ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
     url_media = "https://upload.twitter.com/1.1/media/upload.json"
     url_text = "https://api.twitter.com/1.1/statuses/update.json"
 
@@ -231,10 +227,10 @@ def predator():
     # プレデターボーダーの情報取得
     url_map = "https://api.mozambiquehe.re/maprotation?version=2&auth="
     url_pred = "https://api.mozambiquehe.re/predator?auth="
-    als_api_key = settings.ALS_API_KEY
-    res_map = requests.get(url_map + als_api_key)
+    ALS_API_KEY = settings.ALS_API_KEY
+    res_map = requests.get(url_map + ALS_API_KEY)
     time.sleep(5)
-    res_pred = requests.get(url_pred + als_api_key)
+    res_pred = requests.get(url_pred + ALS_API_KEY)
     json_map = json.loads(res_map.text)
     json_pred = json.loads(res_pred.text)
     if res_pred.status_code == 200:
@@ -264,14 +260,9 @@ def predator():
     for i in range(len(tweet_segment)):
         tweet_content = tweet_content + tweet_segment[i]
 
-    # APIインスタンスを作成
-    auth = tweepy.OAuthHandler(settings.API_KEY, settings.API_SECRET_KEY)
-    auth.set_access_token(settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
-    api = tweepy.API(auth)
-
     # ツイート送信
-    api.update_status(tweet_content)
-    print("(Predator)Tweet has been sent.")
+    client.create_tweet(text=tweet_content)
+    print("(Predator)Tweet has been sent")
 
 
 def store_info():
@@ -284,8 +275,8 @@ def store_info():
 
     # ストア情報の取得
     url_shop = "https://api.mozambiquehe.re/store?auth="
-    als_api_key = settings.ALS_API_KEY
-    res_shop = requests.get(url_shop + als_api_key)
+    ALS_API_KEY = settings.ALS_API_KEY
+    res_shop = requests.get(url_shop + ALS_API_KEY)
     json_shop = json.loads(res_shop.text)
     if res_shop.status_code == 200:
         print("(ALS)Request succeeded")
@@ -323,8 +314,8 @@ def store_info():
     for i in range(len(tweet_segment)):
         tweet_content = tweet_content + tweet_segment[i]
 
-    twitter = OAuth1Session(settings.API_KEY, settings.API_SECRET_KEY,
-                            settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
+    twitter = OAuth1Session(API_KEY, API_SECRET_KEY,
+                            ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
     url_media = "https://upload.twitter.com/1.1/media/upload.json"
     url_text = "https://api.twitter.com/1.1/statuses/update.json"
 
@@ -344,8 +335,8 @@ def store_info():
     params = {"status": tweet_content, "media_ids": media_id}
 
     # APIインスタンスを作成
-    auth = tweepy.OAuthHandler(settings.API_KEY, settings.API_SECRET_KEY)
-    auth.set_access_token(settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
+    auth = tweepy.OAuthHandler(API_KEY, API_SECRET_KEY)
+    auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
     api = tweepy.API(auth)
 
     # 自身の直近15ツイートを取得し，まだtweet_contentをツイートしていないことを確認
@@ -369,6 +360,8 @@ def tweet(event, context):
     if(dt_now.hour == 2 and dt_now.minute < 10):
         map_rotation()
         predator()
-        craft_rotation()
+    elif(dt_now.hour == 3 and dt_now.minute < 10):
+        map_rotation()
+        # craft_rotation()
     else:
         map_rotation()
