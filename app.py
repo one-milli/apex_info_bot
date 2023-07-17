@@ -81,7 +81,6 @@ def appendName(json_input):
 
 def map_rotation():
     time.sleep(5)
-    screen_name = "ApexMapBot"
 
     # マップローテーションの取得
     url_map = "https://api.mozambiquehe.re/maprotation?auth="
@@ -131,7 +130,7 @@ def map_rotation():
 
     # ツイート送信
     client.create_tweet(text=tweet_content)
-    print("(Map)Tweet has been sent")
+    print("(Map)Tweet has been sent.")
 
 
 def craft_rotation():
@@ -139,7 +138,6 @@ def craft_rotation():
 
     # クラフトローテーションの取得
     url_craft = "https://api.mozambiquehe.re/crafting?auth="
-    ALS_API_KEY = settings.ALS_API_KEY
     res_craft = requests.get(url_craft + ALS_API_KEY)
     json_craft = json.loads(res_craft.text)
     if res_craft.status_code == 200:
@@ -171,10 +169,10 @@ def craft_rotation():
     for i in range(len(tweet_segment)):
         tweet_content = tweet_content + tweet_segment[i]
 
+    # Authenticate Twitter API
     twitter = OAuth1Session(API_KEY, API_SECRET_KEY,
                             ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
     url_media = "https://upload.twitter.com/1.1/media/upload.json"
-    url_text = "https://api.twitter.com/1.1/statuses/update.json"
 
     media_id = []
 
@@ -216,10 +214,50 @@ def craft_rotation():
     print("Image uploaded (4)")
 
     media_id = ','.join(media_id)
-    params = {"status": tweet_content, "media_ids": media_id}
 
     # ツイート送信
-    twitter.post(url_text, params=params)
+    client.create_tweet(text=tweet_content, media_ids=media_id)
+    print("(Craft)Tweet has been sent.")
+
+
+def craft_rotation2():
+    time.sleep(5)
+
+    # クラフトローテーションの取得
+    url_craft = "https://api.mozambiquehe.re/crafting?auth="
+    res_craft = requests.get(url_craft + ALS_API_KEY)
+    json_craft = json.loads(res_craft.text)
+    if res_craft.status_code == 200:
+        print("(ALS)Request succeeded")
+    else:
+        print("(ALS)Request failed with " + str(res_craft.status_code))
+        sys.exit()
+
+    daily_item_1 = json_craft[0]['bundleContent'][0]
+    daily_item_2 = json_craft[0]['bundleContent'][1]
+    weekly_item_1 = json_craft[1]['bundleContent'][0]
+    weekly_item_2 = json_craft[1]['bundleContent'][1]
+
+    JST = timezone(timedelta(hours=+9), 'JST')
+    today = datetime.now(JST)
+
+    # ツイート内容
+    tweet_segment = ["【"+str(today.month)+"月"+str(today.day)+"日のクラフトローテーション】\n",
+                     "デイリー:\n",
+                     "["+chr(128313)+str(daily_item_1['cost'])+"] "+item_list_daily.get(
+                         daily_item_1['itemType']['name'], daily_item_1['itemType']['name'])+"\n",
+                     "["+chr(128313)+str(daily_item_2['cost'])+"] "+item_list_daily.get(
+                         daily_item_2['itemType']['name'], daily_item_2['itemType']['name'])+"\n",
+                     "ウィークリー:\n",
+                     "["+chr(128313)+str(weekly_item_1['cost'])+"] " +
+                     item_list_weekly[weekly_item_1['itemType']['name']]+"\n",
+                     "["+chr(128313)+str(weekly_item_2['cost'])+"] "+item_list_weekly[weekly_item_2['itemType']['name']]]
+    tweet_content = ""
+    for i in range(len(tweet_segment)):
+        tweet_content = tweet_content + tweet_segment[i]
+
+    # ツイート送信
+    client.create_tweet(text=tweet_content)
     print("(Craft)Tweet has been sent.")
 
 
@@ -263,7 +301,7 @@ def predator():
 
     # ツイート送信
     client.create_tweet(text=tweet_content)
-    print("(Predator)Tweet has been sent")
+    print("(Predator)Tweet has been sent.")
 
 
 def store_info():
@@ -363,6 +401,6 @@ def tweet(event, context):
         predator()
     elif(dt_now.hour == 3 and dt_now.minute < 10):
         map_rotation()
-        # craft_rotation()
+        craft_rotation2()
     else:
         map_rotation()
