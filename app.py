@@ -287,13 +287,13 @@ def predator():
                      map_list[current_map]['name'],
                      "\n\n【現在のプレデターボーダー】\n",
                      "PC      :"+str(br_pred_cap['PC']['val']),
-                     "LP\n" if br_pred_cap['PC']['val'] > 24000 else "LP(現在"+str(
+                     "RP\n" if br_pred_cap['PC']['val'] > 15000 else "RP(現在"+str(
                          br_pred_cap['PC']['totalMastersAndPreds'])+"人)\n",
                      "PS4/5 :"+str(br_pred_cap['PS4']['val']),
-                     "LP\n" if br_pred_cap['PS4']['val'] > 24000 else "LP(現在"+str(
+                     "RP\n" if br_pred_cap['PS4']['val'] > 15000 else "RP(現在"+str(
                          br_pred_cap['PS4']['totalMastersAndPreds'])+"人)\n",
                      "Switch:"+str(br_pred_cap['SWITCH']['val']),
-                     "LP\n" if br_pred_cap['SWITCH']['val'] > 24000 else "LP(現在"+str(
+                     "RP\n" if br_pred_cap['SWITCH']['val'] > 15000 else "RP(現在"+str(
                          br_pred_cap['SWITCH']['totalMastersAndPreds'])+"人)"]
     tweet_content = ""
     for i in range(len(tweet_segment)):
@@ -396,11 +396,11 @@ def store_info():
 def tweet(event, context):
     JST = timezone(timedelta(hours=+9), 'JST')
     dt_now = datetime.now(JST)
-    if(dt_now.hour == 2 and dt_now.minute < 10):
+    if (dt_now.hour == 2 and dt_now.minute < 10):
         map_rotation()
         predator()
-    elif(dt_now.hour == 3 and dt_now.minute < 10):
+    elif (dt_now.hour == 3 and dt_now.minute < 10):
         map_rotation()
-        craft_rotation2()
+        # craft_rotation2()
     else:
         map_rotation()
