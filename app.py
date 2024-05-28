@@ -1,16 +1,19 @@
 import json
-import requests
-import settings
 import sys
 import time
-import tweepy
 import urllib.request
 from datetime import datetime, timedelta, timezone
+import requests
+import tweepy
 from requests_oauthlib import OAuth1Session
+import settings
 
 # 和訳データ
-map_list = {"Kings Canyon": {"name": "キングスキャニオン", "emoji": 127964}, "World's Edge": {"name": "ワールズエッジ", "emoji": 127755},
-            "Olympus": {"name": "オリンパス", "emoji": 127961}, "Storm Point": {"name": "ストームポイント", "emoji": 127965}, "Broken Moon": {"name": "ブロークンムーン", "emoji": 127768}}
+map_list = {"Kings Canyon": {"name": "キングスキャニオン", "emoji": 127964},
+            "World's Edge": {"name": "ワールズエッジ", "emoji": 127755},
+            "Olympus": {"name": "オリンパス", "emoji": 127961},
+            "Storm Point": {"name": "ストームポイント", "emoji": 127965},
+            "Broken Moon": {"name": "ブロークンムーン", "emoji": 127768}}
 item_list_daily = {"extended_light_mag": "拡張ライトマガジン Lv3",
                    "extended_heavy_mag": "拡張ヘビーマガジン Lv3",
                    "extended_energy_mag": "拡張エネルギーマガジン Lv3",
@@ -61,11 +64,11 @@ def cleanUp(screen_name, api):
         timestamp = tweet.created_at
         diff = now - timestamp
         diff_days = diff.days
-        diff_hours = diff.seconds/3600
-        diff_hours = diff_hours+diff_days*24
+        diff_hours = diff.seconds / 3600
+        diff_hours = diff_hours + diff_days * 24
         if 6 < diff_hours and tweet.text.startswith(head):
             api.destroy_status(tweet.id)
-            print("Tweet(ID:"+str(tweet.id)+") has been deleted")
+            print("Tweet(ID:" + str(tweet.id) + ") has been deleted")
 
 
 # そのスキンのキャラ/武器名をjsonに追加
@@ -74,7 +77,7 @@ def appendName(json_input):
     tgt_end = "_"
     for item in json_input:
         idx_start = item['content'][0]['ref'].find(tgt_start)
-        buff = item['content'][0]['ref'][idx_start+6:]
+        buff = item['content'][0]['ref'][idx_start + 6:]
         idx_end = buff.find(tgt_end)
         item['whose'] = buff[:idx_end]
 
@@ -87,9 +90,9 @@ def map_rotation():
     res_map = requests.get(url_map + ALS_API_KEY)
     json_map = json.loads(res_map.text)
     if res_map.status_code == 200:
-        print("(ALS)Request succeeded")
+        print("(ALS map)Request succeeded")
     else:
-        print("(ALS)Request failed with " + str(res_map.status_code))
+        print("(ALS map)Request failed with " + str(res_map.status_code))
         sys.exit()
 
     current_map = json_map['current']['map']
@@ -114,19 +117,21 @@ def map_rotation():
     next_map_end_jst = next_map_end_jst + timedelta(hours=9)
 
     # ツイート内容
-    tweet_segment = ["【現在のマップローテーション】\n",
-                     chr(map_list[current_map]['emoji']),
-                     map_list[current_map]['name'],
-                     "("+current_map_start_jst.strftime('%H:%M')+"~",
-                     current_map_end_jst.strftime('%H:%M')+")\n\n",
-                     "【次のマップローテーション】\n",
-                     chr(map_list[next_map]['emoji']),
-                     map_list[next_map]['name'],
-                     "("+next_map_start_jst.strftime('%H:%M')+"~",
-                     next_map_end_jst.strftime('%H:%M') + ")"]
-    tweet_content = ""
-    for i in range(len(tweet_segment)):
-        tweet_content = tweet_content + tweet_segment[i]
+    current_emoji = chr(map_list[current_map]['emoji'])
+    current_map_name = map_list[current_map]['name']
+    current_map_start_time = current_map_start_jst.strftime('%H:%M')
+    current_map_end_time = current_map_end_jst.strftime('%H:%M')
+    next_emoji = chr(map_list[next_map]['emoji'])
+    next_map_name = map_list[next_map]['name']
+    next_map_start_time = next_map_start_jst.strftime('%H:%M')
+    next_map_end_time = next_map_end_jst.strftime('%H:%M')
+
+    tweet_content = f"【現在のマップローテーション】\n"\
+                    f"{current_emoji}{current_map_name}"\
+                    f"({current_map_start_time}~{current_map_end_time})\n\n"\
+                    f"【次のマップローテーション】\n"\
+                    f"{next_emoji}{next_map_name}"\
+                    f"({next_map_start_time}~{next_map_end_time})"
 
     # ツイート送信
     client.create_tweet(text=tweet_content)
@@ -155,16 +160,16 @@ def craft_rotation():
     today = datetime.now(JST)
 
     # ツイート内容
-    tweet_segment = ["【"+str(today.month)+"月"+str(today.day)+"日のクラフトローテーション】\n",
+    tweet_segment = ["【" + str(today.month) + "月" + str(today.day) + "日のクラフトローテーション】\n",
                      "デイリー:\n",
-                     "["+chr(128313)+str(daily_item_1['cost'])+"] "+item_list_daily.get(
-                         daily_item_1['itemType']['name'], daily_item_1['itemType']['name'])+"\n",
-                     "["+chr(128313)+str(daily_item_2['cost'])+"] "+item_list_daily.get(
-                         daily_item_2['itemType']['name'], daily_item_2['itemType']['name'])+"\n",
+                     "[" + chr(128313) + str(daily_item_1['cost']) + "] " + item_list_daily.get(
+                         daily_item_1['itemType']['name'], daily_item_1['itemType']['name']) + "\n",
+                     "[" + chr(128313) + str(daily_item_2['cost']) + "] " + item_list_daily.get(
+                         daily_item_2['itemType']['name'], daily_item_2['itemType']['name']) + "\n",
                      "ウィークリー:\n",
-                     "["+chr(128313)+str(weekly_item_1['cost'])+"] " +
-                     item_list_weekly[weekly_item_1['itemType']['name']]+"\n",
-                     "["+chr(128313)+str(weekly_item_2['cost'])+"] "+item_list_weekly[weekly_item_2['itemType']['name']]]
+                     "[" + chr(128313) + str(weekly_item_1['cost']) + "] " +
+                     item_list_weekly[weekly_item_1['itemType']['name']] + "\n",
+                     "[" + chr(128313) + str(weekly_item_2['cost']) + "] " + item_list_weekly[weekly_item_2['itemType']['name']]]
     tweet_content = ""
     for i in range(len(tweet_segment)):
         tweet_content = tweet_content + tweet_segment[i]
@@ -242,16 +247,16 @@ def craft_rotation2():
     today = datetime.now(JST)
 
     # ツイート内容
-    tweet_segment = ["【"+str(today.month)+"月"+str(today.day)+"日のクラフトローテーション】\n",
+    tweet_segment = ["【" + str(today.month) + "月" + str(today.day) + "日のクラフトローテーション】\n",
                      "デイリー:\n",
-                     "["+chr(128313)+str(daily_item_1['cost'])+"] "+item_list_daily.get(
-                         daily_item_1['itemType']['name'], daily_item_1['itemType']['name'])+"\n",
-                     "["+chr(128313)+str(daily_item_2['cost'])+"] "+item_list_daily.get(
-                         daily_item_2['itemType']['name'], daily_item_2['itemType']['name'])+"\n",
+                     "[" + chr(128313) + str(daily_item_1['cost']) + "] " + item_list_daily.get(
+                         daily_item_1['itemType']['name'], daily_item_1['itemType']['name']) + "\n",
+                     "[" + chr(128313) + str(daily_item_2['cost']) + "] " + item_list_daily.get(
+                         daily_item_2['itemType']['name'], daily_item_2['itemType']['name']) + "\n",
                      "ウィークリー:\n",
-                     "["+chr(128313)+str(weekly_item_1['cost'])+"] " +
-                     item_list_weekly[weekly_item_1['itemType']['name']]+"\n",
-                     "["+chr(128313)+str(weekly_item_2['cost'])+"] "+item_list_weekly[weekly_item_2['itemType']['name']]]
+                     "[" + chr(128313) + str(weekly_item_1['cost']) + "] " +
+                     item_list_weekly[weekly_item_1['itemType']['name']] + "\n",
+                     "[" + chr(128313) + str(weekly_item_2['cost']) + "] " + item_list_weekly[weekly_item_2['itemType']['name']]]
     tweet_content = ""
     for i in range(len(tweet_segment)):
         tweet_content = tweet_content + tweet_segment[i]
@@ -264,40 +269,45 @@ def craft_rotation2():
 def predator():
     time.sleep(5)
     # プレデターボーダーの情報取得
-    url_map = "https://api.mozambiquehe.re/maprotation?version=2&auth="
-    url_pred = "https://api.mozambiquehe.re/predator?auth="
     ALS_API_KEY = settings.ALS_API_KEY
+    url_map = "https://api.mozambiquehe.re/maprotation?version=2&auth="
     res_map = requests.get(url_map + ALS_API_KEY)
-    time.sleep(5)
-    res_pred = requests.get(url_pred + ALS_API_KEY)
     json_map = json.loads(res_map.text)
+    if res_map.status_code == 200:
+        print("(ALS map)Request succeeded")
+    else:
+        print("(ALS map)Request failed with " + str(res_map.status_code))
+        sys.exit()
+
+    time.sleep(5)
+    url_pred = "https://api.mozambiquehe.re/predator?auth="
+    res_pred = requests.get(url_pred + ALS_API_KEY)
     json_pred = json.loads(res_pred.text)
     if res_pred.status_code == 200:
-        print("(ALS)Request succeeded")
+        print("(ALS predator)Request succeeded")
     else:
-        print("(ALS)Request failed with " + str(res_pred.status_code))
+        print("(ALS predator)Request failed with " + str(res_pred.status_code))
         sys.exit()
 
     current_map = json_map['ranked']['current']['map']
     br_pred_cap = json_pred['RP']
 
     # ツイート内容
-    tweet_segment = ["【本日のランクマップ】\n",
-                     chr(map_list[current_map]['emoji']),
-                     map_list[current_map]['name'],
-                     "\n\n【現在のプレデターボーダー】\n",
-                     "PC      :"+str(br_pred_cap['PC']['val']),
-                     "RP\n" if br_pred_cap['PC']['val'] > 15000 else "RP(現在"+str(
-                         br_pred_cap['PC']['totalMastersAndPreds'])+"人)\n",
-                     "PS4/5 :"+str(br_pred_cap['PS4']['val']),
-                     "RP\n" if br_pred_cap['PS4']['val'] > 15000 else "RP(現在"+str(
-                         br_pred_cap['PS4']['totalMastersAndPreds'])+"人)\n",
-                     "Switch:"+str(br_pred_cap['SWITCH']['val']),
-                     "RP\n" if br_pred_cap['SWITCH']['val'] > 15000 else "RP(現在"+str(
-                         br_pred_cap['SWITCH']['totalMastersAndPreds'])+"人)"]
-    tweet_content = ""
-    for i in range(len(tweet_segment)):
-        tweet_content = tweet_content + tweet_segment[i]
+    emoji = chr(map_list[current_map]['emoji'])
+    ranked_map = map_list[current_map]['name']
+    pc_rp = str(br_pred_cap['PC']['val'])
+    ps_rp = str(br_pred_cap['PS4']['val'])
+    sw_rp = str(br_pred_cap['SWITCH']['val'])
+    pc_masters = str(br_pred_cap['PC']['totalMastersAndPreds'])
+    ps_masters = str(br_pred_cap['PS4']['totalMastersAndPreds'])
+    sw_masters = str(br_pred_cap['SWITCH']['totalMastersAndPreds'])
+
+    tweet_content = f"【本日のランクマップ】\n"\
+                    f"{emoji}{ranked_map}\n\n"\
+                    f"【現在のプレデターボーダー】\n"\
+                    f"PC      :{pc_rp}RP\n" if int(pc_rp) > 15000 else f"PC      :{pc_rp}RP(現在{pc_masters}人)\n"\
+                    f"PS4/5 :{ps_rp}RP\n" if int(ps_rp) > 15000 else f"PS4/5 :{ps_rp}RP(現在{ps_masters}人)\n"\
+                    f"Switch:{sw_rp}RP\n" if int(sw_rp) > 15000 else f"Switch:{sw_rp}RP(現在{sw_masters}人)"
 
     # ツイート送信
     client.create_tweet(text=tweet_content)
@@ -369,7 +379,7 @@ def store_info():
         files = {"media": data}
         req_media = twitter.post(url_media, files=files)
         media_id.append(json.loads(req_media.text)['media_id_string'])
-        print("Image uploaded "+str(i+1))
+        print("Image uploaded " + str(i + 1))
     media_id = ','.join(media_id)
     params = {"status": tweet_content, "media_ids": media_id}
 
@@ -394,13 +404,11 @@ def store_info():
 
 
 def tweet(event, context):
+    time.sleep(3)
     JST = timezone(timedelta(hours=+9), 'JST')
     dt_now = datetime.now(JST)
-    if (dt_now.hour == 2 and dt_now.minute < 10):
+    if dt_now.hour == 3:
         map_rotation()
         predator()
-    elif (dt_now.hour == 3 and dt_now.minute < 10):
-        map_rotation()
-        # craft_rotation2()
     else:
         map_rotation()
