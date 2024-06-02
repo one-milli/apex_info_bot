@@ -302,12 +302,15 @@ def predator():
     ps_masters = str(br_pred_cap['PS4']['totalMastersAndPreds'])
     sw_masters = str(br_pred_cap['SWITCH']['totalMastersAndPreds'])
 
-    tweet_content = f"【本日のランクマップ】\n"\
-                    f"{emoji}{ranked_map}\n\n"\
-                    f"【現在のプレデターボーダー】\n"\
-                    f"PC      :{pc_rp}RP\n" if int(pc_rp) > 15000 else f"PC      :{pc_rp}RP(現在{pc_masters}人)\n"\
-                    f"PS4/5 :{ps_rp}RP\n" if int(ps_rp) > 15000 else f"PS4/5 :{ps_rp}RP(現在{ps_masters}人)\n"\
-                    f"Switch:{sw_rp}RP\n" if int(sw_rp) > 15000 else f"Switch:{sw_rp}RP(現在{sw_masters}人)"
+    tweet_segments = ["【本日のランクマップ】\n",
+                      emoji + ranked_map + "\n\n",
+                      "【現在のプレデターボーダー】\n",
+                      "PC      :" + pc_rp + "RP\n" if int(pc_rp) > 15000 else "PC      :" + pc_rp + "RP(現在" + pc_masters + "人)\n",
+                      "PS4/5 :" + ps_rp + "RP\n" if int(ps_rp) > 15000 else "PS4/5 :" + ps_rp + "RP(現在" + ps_masters + "人)\n",
+                      "Switch:" + sw_rp + "RP\n" if int(sw_rp) > 15000 else "Switch:" + sw_rp + "RP(現在" + sw_masters + "人)"]
+    tweet_content = ""
+    for _, tweet_segment in enumerate(tweet_segments):
+        tweet_content = tweet_content + tweet_segment
 
     # ツイート送信
     client.create_tweet(text=tweet_content)
